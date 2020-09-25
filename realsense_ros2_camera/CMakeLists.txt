@@ -79,6 +79,8 @@ add_executable(${PROJECT_NAME}
   src/realsense_camera_node.cpp
 )
 
+target_link_libraries(${PROJECT_NAME} realsense2)
+
 ament_target_dependencies(${PROJECT_NAME}
   cv_bridge
   image_transport
