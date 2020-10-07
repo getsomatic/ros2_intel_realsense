@@ -11,14 +11,14 @@
         resolution: [640,480]
         fps: 30
       depth0:
-        enabled: true
+        enabled: false
         resolution: [640,480]
         fps: 30
       infra1:
-        enabled: true
+        enabled: false
         resolution: [640,480]
         fps: 30
       infra2:
-        enabled: true
+        enabled: false
         resolution: [640,480]
         fps: 30

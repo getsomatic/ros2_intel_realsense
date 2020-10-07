@@ -27,6 +27,9 @@
 #include "realsense_msgs/msg/imu_info.hpp"
 #include "realsense/rs_constants.hpp"
 
+// NEW STUFF
+#include "sensor_msgs/msg/compressed_image.hpp"
+
 namespace realsense
 {
 using Result = rcl_interfaces::msg::SetParametersResult;
@@ -118,6 +121,10 @@ protected:
   std::map<stream_index_pair, rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr> imu_pub_;
   std::map<stream_index_pair, rclcpp::Publisher<realsense_msgs::msg::IMUInfo>::SharedPtr> imu_info_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+  // NEW STUFF
+  rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr image_pub_compressed_;
+
+
 };
 }  // namespace realsense
 #endif  // REALSENSE__RS_BASE_HPP_

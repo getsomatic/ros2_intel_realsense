@@ -54,6 +54,11 @@ RealSenseD435::RealSenseD435(rs2::context ctx, rs2::device dev, rclcpp::Node & n
   } else {
     dense_pc_ = node_.declare_parameter("dense_pointcloud", DENSE_PC);
   }
+
+  // NEW STUFF
+  image_pub_compressed_ = node_.create_publisher<sensor_msgs::msg::CompressedImage>("/camera/color/image_raw/compressed", 1);
+  //std::cout << "\n" << "COMPRESSED IMAGE PUBLISHER CREATED" << "\n" << std::endl;
+
   initialized_ = true;
 }
 
@@ -61,7 +66,8 @@ void RealSenseD435::publishTopicsCallback(const rs2::frame & frame)
 {
   rs2::frameset frameset = frame.as<rs2::frameset>();
   rclcpp::Time t = node_.now();
-  if (enable_[COLOR] && (image_pub_[COLOR]->get_subscription_count() > 0 || camera_info_pub_[COLOR]->get_subscription_count() > 0)){
+  // new stuff : || image_pub_compressed_->get_subscription_count() > 0
+  if (enable_[COLOR] && (image_pub_[COLOR]->get_subscription_count() > 0 || camera_info_pub_[COLOR]->get_subscription_count() > 0 || image_pub_compressed_->get_subscription_count() > 0)){
     auto frame = frameset.get_color_frame();
     publishImageTopic(frame, t);
   }
