@@ -16,7 +16,7 @@
 #include "realsense/rs_base.hpp"
 // NEW STUFF
 #include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgcodecs/imgcodecs_c.h>
+
 namespace realsense
 {
 using namespace std::chrono_literals;
@@ -186,7 +186,7 @@ void RealSenseBase::publishImageTopic(const rs2::frame & frame, const rclcpp::Ti
     // NEW STUFF
 	  std::vector<int> params;
 	  params.resize(2, 0);
-	  params[0] = CV_IMWRITE_JPEG_QUALITY;
+	  params[0] = 1;  //Jpeg quality param index;
 	  params[1] = 20; // 0-100 , bad->good jpeg quality
 
     sensor_msgs::msg::CompressedImage::SharedPtr imgCompressed(new sensor_msgs::msg::CompressedImage);
