@@ -16,6 +16,7 @@
 #include "realsense/rs_base.hpp"
 // NEW STUFF
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgcodecs/imgcodecs_c.h>
 namespace realsense
 {
 using namespace std::chrono_literals;
@@ -183,13 +184,18 @@ void RealSenseBase::publishImageTopic(const rs2::frame & frame, const rclcpp::Ti
     image_pub_[type_index]->publish(*img);
 
     // NEW STUFF
+	  std::vector<int> params;
+	  params.resize(2, 0);
+	  params[0] = CV_IMWRITE_JPEG_QUALITY;
+	  params[1] = 20; // 0-100 , bad->good jpeg quality
+
     sensor_msgs::msg::CompressedImage::SharedPtr imgCompressed(new sensor_msgs::msg::CompressedImage);
     imgCompressed->format = "jpeg";
     imgCompressed->header.frame_id = OPTICAL_FRAME_ID.at(type_index);
     imgCompressed->header.stamp = time;
-    cv::imencode(".jpg", cv_image, imgCompressed->data);
+    cv::imencode(".jpg", cv_image, imgCompressed->data, params);
     float cRatio = (float)(cv_image.rows * cv_image.cols * cv_image.elemSize())/ (float)imgCompressed->data.size();
-    //std::cout << "\n" << "ALL CALCULATIONS READY, COMPRESSION = " << cRatio << "\n" << std::endl;
+    std::cout << "\n" << "COMPRESSION = " << cRatio << "\n" << std::endl;
     image_pub_compressed_->publish(*imgCompressed);
 
   } else {
@@ -208,7 +214,7 @@ void RealSenseBase::publishImageTopic(const rs2::frame & frame, const rclcpp::Ti
     imgCompressed->header.frame_id = OPTICAL_FRAME_ID.at(type_index);
     imgCompressed->header.stamp = time;                                                                            
     cv::imencode(".jpg", cv_image, imgCompressed->data);
-    float cRatio = (float)(cv_image.rows * cv_image.cols * cv_image.elemSize())/ (float)imgCompressed->data.size();
+    //float cRatio = (float)(cv_image.rows * cv_image.cols * cv_image.elemSize())/ (float)imgCompressed->data.size();
     //std::cout << "\n" << "ALL CALCULATIONS READY, COMPRESSION = " << cRatio << "\n" << std::endl;
     image_pub_compressed_->publish(std::move(imgCompressed));
   }
