@@ -194,8 +194,8 @@ void RealSenseBase::publishImageTopic(const rs2::frame & frame, const rclcpp::Ti
     imgCompressed->header.frame_id = OPTICAL_FRAME_ID.at(type_index);
     imgCompressed->header.stamp = time;
     cv::imencode(".jpg", cv_image, imgCompressed->data, params);
-    float cRatio = (float)(cv_image.rows * cv_image.cols * cv_image.elemSize())/ (float)imgCompressed->data.size();
-    std::cout << "\n" << "COMPRESSION = " << cRatio << "\n" << std::endl;
+    //float cRatio = (float)(cv_image.rows * cv_image.cols * cv_image.elemSize())/ (float)imgCompressed->data.size();
+    //std::cout << "\n" << "COMPRESSION = " << cRatio << "\n" << std::endl;
     image_pub_compressed_->publish(*imgCompressed);
 
   } else {
