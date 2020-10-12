@@ -184,16 +184,17 @@ void RealSenseBase::publishImageTopic(const rs2::frame & frame, const rclcpp::Ti
     image_pub_[type_index]->publish(*img);
 
     // NEW STUFF
-	  std::vector<int> params;
-	  params.resize(2, 0);
-	  params[0] = 1;  //Jpeg quality param index;
-	  params[1] = 20; // 0-100 , bad->good jpeg quality
+    std::vector<int> params;
+    params.resize(2, 0);
+    params[0] = 1;  //Jpeg quality param index;
+    params[1] = 20; // 0-100 , bad->good jpeg quality
 
     sensor_msgs::msg::CompressedImage::SharedPtr imgCompressed(new sensor_msgs::msg::CompressedImage);
     imgCompressed->format = "jpeg";
     imgCompressed->header.frame_id = OPTICAL_FRAME_ID.at(type_index);
     imgCompressed->header.stamp = time;
     cv::imencode(".jpg", cv_image, imgCompressed->data, params);
+    //std::cout << "\n\n\n" << imgCompressed->data.size();
     //float cRatio = (float)(cv_image.rows * cv_image.cols * cv_image.elemSize())/ (float)imgCompressed->data.size();
     //std::cout << "\n" << "COMPRESSION = " << cRatio << "\n" << std::endl;
     image_pub_compressed_->publish(*imgCompressed);
