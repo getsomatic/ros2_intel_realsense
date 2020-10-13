@@ -3,3 +3,4 @@
 *.bag
 *.vscode
 /.idea
+/realsense_ros/cmake-build-debug
