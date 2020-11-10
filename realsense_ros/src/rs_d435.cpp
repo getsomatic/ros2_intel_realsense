@@ -56,7 +56,7 @@ RealSenseD435::RealSenseD435(rs2::context ctx, rs2::device dev, rclcpp::Node & n
   }
 
   // NEW STUFF
-  image_pub_compressed_ = node_.create_publisher<sensor_msgs::msg::CompressedImage>("/camera/color/image_raw/compressed", 1);
+  //image_pub_compressed_ = node_.create_publisher<sensor_msgs::msg::CompressedImage>("/camera/color/image_raw/compressed", 1);
   //std::cout << "\n" << "COMPRESSED IMAGE PUBLISHER CREATED" << "\n" << std::endl;
 
   initialized_ = true;
@@ -67,19 +67,19 @@ void RealSenseD435::publishTopicsCallback(const rs2::frame & frame)
   rs2::frameset frameset = frame.as<rs2::frameset>();
   rclcpp::Time t = node_.now();
   // new stuff : || image_pub_compressed_->get_subscription_count() > 0
-  if (enable_[COLOR] && (image_pub_[COLOR]->get_subscription_count() > 0 || camera_info_pub_[COLOR]->get_subscription_count() > 0 || image_pub_compressed_->get_subscription_count() > 0)){
+  if (enable_[COLOR] && (image_pub1_[COLOR].getNumSubscribers() > 0 || camera_info_pub_[COLOR]->get_subscription_count() > 0)){
     auto frame = frameset.get_color_frame();
     publishImageTopic(frame, t);
   }
-  if (enable_[DEPTH] && (image_pub_[DEPTH]->get_subscription_count() > 0 || camera_info_pub_[DEPTH]->get_subscription_count() > 0)) {
+  if (enable_[DEPTH] && (image_pub1_[DEPTH].getNumSubscribers() > 0 || camera_info_pub_[DEPTH]->get_subscription_count() > 0)) {
     auto frame = frameset.get_depth_frame();
     publishImageTopic(frame, t);
   }
-  if (enable_[INFRA1] && (image_pub_[INFRA1]->get_subscription_count() > 0 || camera_info_pub_[INFRA1]->get_subscription_count() > 0)) {
+  if (enable_[INFRA1] && (image_pub1_[INFRA1].getNumSubscribers() > 0 || camera_info_pub_[INFRA1]->get_subscription_count() > 0)) {
     auto frame = frameset.get_infrared_frame(1);
     publishImageTopic(frame, t);
   }
-  if (enable_[INFRA2] && (image_pub_[INFRA2]->get_subscription_count() > 0 || camera_info_pub_[INFRA2]->get_subscription_count() > 0)) {
+  if (enable_[INFRA2] && (image_pub1_[INFRA2].getNumSubscribers() > 0 || camera_info_pub_[INFRA2]->get_subscription_count() > 0)) {
     auto frame = frameset.get_infrared_frame(2);
     publishImageTopic(frame, t);
   }
