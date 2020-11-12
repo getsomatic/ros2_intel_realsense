@@ -26,6 +26,7 @@ RealSenseBase::RealSenseBase(rs2::context ctx, rs2::device dev, rclcpp::Node & n
   ctx_(ctx),
   dev_(dev)
 {
+
   // Publish static transforms
   if (node_.has_parameter("base_frame_id")) {
     node_.get_parameter("base_frame_id", base_frame_id_);
@@ -34,8 +35,9 @@ RealSenseBase::RealSenseBase(rs2::context ctx, rs2::device dev, rclcpp::Node & n
   }
   pipeline_ = rs2::pipeline(ctx_);
   static_tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(node_);
-  node_.set_on_parameters_set_callback(std::bind(&RealSenseBase::paramChangeCallback, this, std::placeholders::_1));
+  //auto paramNode = std::make_shared<rclcpp::Node>("paramNode");
   it_ = new image_transport::ImageTransport(node_.shared_from_this());
+  node_.set_on_parameters_set_callback(std::bind(&RealSenseBase::paramChangeCallback, this, std::placeholders::_1));
 }
 
 RealSenseBase::~RealSenseBase()
@@ -154,9 +156,12 @@ void RealSenseBase::setupStream(const stream_index_pair & stream)
     stream_info_.insert(std::pair<stream_index_pair, VideoStreamInfo>(stream, info));
 
     //image_pub_.insert(std::pair<stream_index_pair, rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr>
-    //   (stream, node_.create_publisher<sensor_msgs::msg::Image>(SAMPLE_TOPIC.at(stream), rclcpp::QoS(1))));
-    image_pub1_.insert(std::pair<stream_index_pair, image_transport::Publisher>
-    	(stream, this->it_->advertise(SAMPLE_TOPIC.at(stream), 1)));
+    //  (stream, node_.create_publisher<sensor_msgs::msg::Image>(SAMPLE_TOPIC.at(stream), rclcpp::QoS(1))));
+    //image_pub1_.insert(std::pair<stream_index_pair, image_transport::Publisher>
+    //	(stream, this->it_->advertise(SAMPLE_TOPIC.at(stream), 1, false)));
+
+	image_pub1_.insert(std::pair<stream_index_pair, image_transport::Publisher>
+		(stream, image_transport::create_publisher(&node_, SAMPLE_TOPIC.at(stream))));
 
     camera_info_pub_.insert(std::pair<stream_index_pair, rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr>
       (stream, node_.create_publisher<sensor_msgs::msg::CameraInfo>(INFO_TOPIC.at(stream), rclcpp::QoS(1))));
@@ -169,6 +174,10 @@ void RealSenseBase::setupStream(const stream_index_pair & stream)
 
 void RealSenseBase::publishImageTopic(const rs2::frame & frame, const rclcpp::Time & time)
 {
+	//int paramVal;
+	//node_.get_parameter("camera.color.image_raw.jpeg_quality", paramVal);
+	//RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Hello %d", paramVal);
+
   auto v_frame = frame.as<rs2::video_frame>();
   auto type = v_frame.get_profile().stream_type();
   auto index = v_frame.get_profile().stream_index();
@@ -191,15 +200,15 @@ void RealSenseBase::publishImageTopic(const rs2::frame & frame, const rclcpp::Ti
     image_pub1_[type_index].publish(*img);
 
     // NEW STUFF
-    std::vector<int> params(2, 0);
-    params[0] = 1;  //Jpeg quality param index;
-    params[1] = 20; // 0-100 , bad->good jpeg quality
+    //std::vector<int> params(2, 0);
+    //params[0] = 1;  //Jpeg quality param index;
+    //params[1] = 20; // 0-100 , bad->good jpeg quality
 
-    sensor_msgs::msg::CompressedImage::SharedPtr imgCompressed(new sensor_msgs::msg::CompressedImage);
-    imgCompressed->format = "jpeg";
-    imgCompressed->header.frame_id = OPTICAL_FRAME_ID.at(type_index);
-    imgCompressed->header.stamp = time;
-    cv::imencode(".jpg", cv_image, imgCompressed->data, params);
+    //sensor_msgs::msg::CompressedImage::SharedPtr imgCompressed(new sensor_msgs::msg::CompressedImage);
+    //imgCompressed->format = "jpeg";
+    //imgCompressed->header.frame_id = OPTICAL_FRAME_ID.at(type_index);
+    //imgCompressed->header.stamp = time;
+    //cv::imencode(".jpg", cv_image, imgCompressed->data, params);
     //std::cout << "\n\n\n" << imgCompressed->data.size();
     //float cRatio = (float)(cv_image.rows * cv_image.cols * cv_image.elemSize())/ (float)imgCompressed->data.size();
     //std::cout << "\n" << "COMPRESSION = " << cRatio << "\n" << std::endl;
@@ -217,11 +226,11 @@ void RealSenseBase::publishImageTopic(const rs2::frame & frame, const rclcpp::Ti
     image_pub1_[type_index].publish(std::move(img));
 
     // NEW STUFF
-    auto imgCompressed = std::make_unique<sensor_msgs::msg::CompressedImage>();
-    imgCompressed->format = "jpeg";
-    imgCompressed->header.frame_id = OPTICAL_FRAME_ID.at(type_index);
-    imgCompressed->header.stamp = time;                                                                            
-    cv::imencode(".jpg", cv_image, imgCompressed->data);
+    //auto imgCompressed = std::make_unique<sensor_msgs::msg::CompressedImage>();
+    //imgCompressed->format = "jpeg";
+    //imgCompressed->header.frame_id = OPTICAL_FRAME_ID.at(type_index);
+    //imgCompressed->header.stamp = time;
+    //cv::imencode(".jpg", cv_image, imgCompressed->data);
     //float cRatio = (float)(cv_image.rows * cv_image.cols * cv_image.elemSize())/ (float)imgCompressed->data.size();
     //std::cout << "\n" << "ALL CALCULATIONS READY, COMPRESSION = " << cRatio << "\n" << std::endl;
     //image_pub_compressed_->publish(std::move(imgCompressed));

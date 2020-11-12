@@ -118,15 +118,15 @@ protected:
   std::map<stream_index_pair, sensor_msgs::msg::CameraInfo> camera_info_;
 
   image_transport::ImageTransport* it_{};
-  std::map<stream_index_pair, rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> image_pub_;
   std::map<stream_index_pair, image_transport::Publisher> image_pub1_;
+  std::map<stream_index_pair, rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr> image_pub_;
 
   std::map<stream_index_pair, rclcpp::Publisher<sensor_msgs::msg::CameraInfo>::SharedPtr> camera_info_pub_;
   std::map<stream_index_pair, rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr> imu_pub_;
   std::map<stream_index_pair, rclcpp::Publisher<realsense_msgs::msg::IMUInfo>::SharedPtr> imu_info_pub_;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
   // NEW STUFF
-  rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr image_pub_compressed_;
+  //rclcpp::Publisher<sensor_msgs::msg::CompressedImage>::SharedPtr image_pub_compressed_;
 
 };
 }  // namespace realsense
