@@ -1,5 +1,6 @@
 *.bin
 *.ppm
 *.bag
-/.idea/
-/realsense_ros2_camera/cmake-build-debug/
+*.vscode
+/.idea
+/realsense_ros/cmake-build-debug
