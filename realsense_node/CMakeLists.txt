@@ -6,9 +6,9 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
+# Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -74,11 +74,11 @@ find_package(tf2_ros REQUIRED)
 find_package(realsense_ros REQUIRED)
 find_package(realsense_msgs REQUIRED)
 find_package(image_transport REQUIRED)
+find_package(bcr_core REQUIRED)
 
 add_executable(realsense_node
   src/realsense_node.cpp
 )
-
 ament_target_dependencies(realsense_node
   rclcpp
   nav_msgs
@@ -88,8 +88,9 @@ ament_target_dependencies(realsense_node
   tf2_ros
   realsense_ros
   realsense_msgs
-        image_transport
+  image_transport
 )
+ament_target_dependencies(realsense_node bcr_core)
 
 install(TARGETS realsense_node
   DESTINATION lib/${PROJECT_NAME}

@@ -13,9 +13,11 @@
 // limitations under the License.
 
 #include "realsense/rs_factory.hpp"
+#include "bcr_core/tools/logging.hh"
 
 int main(int argc, char ** argv)
 {
+  bcr::core::tools::logging::Logger(argv[0]).ExecutableLogLevel();
   rclcpp::init(argc, argv);
   auto realsense_node = std::make_shared<realsense::RealSenseNodeFactory>();
   rclcpp::spin(realsense_node);
